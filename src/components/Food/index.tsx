@@ -1,22 +1,35 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { FiEdit3, FiTrash } from 'react-icons/fi';
 
 
 import { Container } from './styles';
 import api from '../../services/api';
 
+interface TypeFood{
+  id: number;
+  name: string;
+  available: boolean;
+  description: string;
+  price: string;
+  image: string;
+}
+interface TypesFoods{
+  food: TypeFood;
+  handleDelete: (id: number) => void;
+  handleEditFood: (id: TypeFood) => void;
+}
 
-export function Food({ available, food, handleDelete, handleEditFood  }){
-  const [isAvailable, setIsAvailable] = useState(available);
+export function Food({ food , handleDelete, handleEditFood  }: TypesFoods){
+  const [isAvailable, setIsAvailable] = useState(food.available);
 
-  useEffect(() => {
+  function toggleAvailable() {
       api.put(`/foods/${food.id}`, {
         ...food,
         available: !isAvailable,
       });
   
-      setIsAvailable({ isAvailable: !isAvailable });
-  }, [])
+      setIsAvailable(!isAvailable);
+  }
 
   function setEditingFood(){
     handleEditFood(food);
@@ -63,7 +76,7 @@ export function Food({ available, food, handleDelete, handleEditFood  }){
                 id={`available-switch-${food.id}`}
                 type="checkbox"
                 checked={isAvailable}
-                onChange={this.toggleAvailable}
+                onChange={toggleAvailable}
                 data-testid={`change-status-food-${food.id}`}
               />
               <span className="slider" />
